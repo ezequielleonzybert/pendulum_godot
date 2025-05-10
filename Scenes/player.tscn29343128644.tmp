@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://2n1u3vao0xuy"]
+
+[ext_resource type="Shader" uid="uid://qq30uq4kkud8" path="res://Assets/player.gdshader" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://dn06dlh7io1wj" path="res://Scripts/player.gd" id="1_cvnsp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_onrkg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4flbx"]
+shader = ExtResource("1_4flbx")
+
+[node name="Player" type="RigidBody2D"]
+script = ExtResource("1_cvnsp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(1.95, 1.95)
+shape = SubResource("CircleShape2D_onrkg")
+
+[node name="Polygon2D" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_4flbx")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
