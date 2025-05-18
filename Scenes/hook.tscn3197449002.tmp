@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://b1ajwlwilgtor"]
+
+[ext_resource type="Script" uid="uid://m4mmxxqhg4lc" path="res://Scripts/hook.gd" id="1_82nft"]
+[ext_resource type="Shader" uid="uid://qq30uq4kkud8" path="res://Assets/player.gdshader" id="1_mrud3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_82nft"]
+shader = ExtResource("1_mrud3")
+shader_parameter/color = Vector3(0, 0, 0)
+
+[node name="Hook" type="Node2D"]
+script = ExtResource("1_82nft")
+color = Color(0.473976, 0.473976, 0.473976, 1)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_82nft")
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(1, 0, 1, 1)

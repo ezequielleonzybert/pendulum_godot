@@ -10,14 +10,11 @@
 [node name="Terrain" parent="." instance=ExtResource("2_bo1nx")]
 
 [node name="Player" parent="." instance=ExtResource("1_ig7tw")]
-color = Color(0.893806, 0.46539, 0.475075, 1)
+color = Color(0.832579, 0.901697, 0.974319, 1)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position_smoothing_enabled = true
 position_smoothing_speed = 15.0
-drag_horizontal_enabled = true
-drag_left_margin = 0.3
-drag_right_margin = 0.3
 script = ExtResource("3_8gbba")
 
 [node name="AlignV" type="Line2D" parent="."]

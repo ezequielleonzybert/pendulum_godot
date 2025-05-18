@@ -6,7 +6,9 @@
 script = ExtResource("1_g24sy")
 
 [node name="Roof" type="Polygon2D" parent="."]
-color = Color(0.407056, 0.407056, 0.407056, 1)
+color = Color(0.831373, 0.901961, 0.972549, 1)
+antialiased = true
 
 [node name="Soil" type="Polygon2D" parent="."]
-color = Color(0.407843, 0.407843, 0.407843, 1)
+color = Color(0.831373, 0.901961, 0.972549, 1)
+antialiased = true
