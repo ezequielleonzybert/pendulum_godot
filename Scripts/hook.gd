@@ -61,7 +61,7 @@ func _input(event: InputEvent) -> void:
 		hookState = HookState.IDLE
 
 func checkCollision():
-	if(Global.pointInPolygon(position, roof.polygon)):
+	if(Geometry2D.is_point_in_polygon(position, roof.polygon)):
 			hookState = HookState.HOOKED
 			angle = -(player.position.angle_to_point(position) + PI/2)
 			length = position.distance_to(player.position)

@@ -23,4 +23,10 @@ func pointInPolygon(point: Vector2, polygon: PackedVector2Array):
 			if point.x < x_intersect:
 				intersections += 1
 
-	return intersections % 2 == 1 
+func circleInPolygon(pos: Vector2, radius: float, polygon: PackedVector2Array) -> bool:
+	for i in range(polygon.size()):
+		var a = polygon[i]
+		var b = polygon[(i + 1) % polygon.size()]
+		if pos.distance_to(Geometry2D.get_closest_point_to_segment(pos, a, b)) < radius:
+			return true
+	return false

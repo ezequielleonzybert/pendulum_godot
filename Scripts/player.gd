@@ -4,7 +4,7 @@ class_name Player
 
 @onready var colorRect = $ColorRect
 @onready var hook : Hook = get_parent().find_child('Hook')
-@export var radius: float = 36
+@export var radius: float
 @export var color: Color = Color()
 
 enum PlayerState {
@@ -25,10 +25,15 @@ var boostIn = 1
 var boostOut = 1.2
 var lastDelta
 
+var roof
+var floor
+
 func _ready() -> void:
-	colorRect.size = Vector2(radius, radius)
-	colorRect.position = Vector2(-radius/2,-radius/2)
+	colorRect.size = Vector2(radius*2, radius*2)
+	colorRect.position = Vector2(-radius,-radius)
 	colorRect.material.set_shader_parameter('color',color)
+	roof = get_parent().find_child('Terrain').roof
+	floor = get_parent().find_child('Terrain').floor
 
 func _process(delta):
 	if not Engine.is_editor_hint():
@@ -41,6 +46,10 @@ func _process(delta):
 			vel += acc * delta
 			prevPosition = position
 			position += vel * delta
+
+			if isColliding(floor.polygon) or isColliding(roof.polygon):
+				position -= vel * delta
+				vel.y *= -1
 
 			if(hook.hookState == Hook.HookState.HOOKED):
 				playerState = PlayerState.SWINGING
@@ -56,6 +65,10 @@ func _process(delta):
 				prevPosition = position
 				position.x = hook.length * sin(hook.angle) + hook.position.x
 				position.y = hook.length * cos(hook.angle) + hook.position.y
+				
+				if isColliding(roof.polygon) or isColliding(floor.polygon):
+					angVel *= -1 #TODO not very well made
+					
 			else:
 				playerState = PlayerState.FALLING
 		counter += delta;
@@ -65,16 +78,19 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed('shootRight') or event.is_action_pressed('shootLeft'):
 		if(playerState == PlayerState.FLOATING):
 			playerState = PlayerState.FALLING
-			
+
 	elif event.is_action_released('shootRight') or event.is_action_released('shootLeft'):
 		if playerState == PlayerState.SWINGING:
 			playerState = PlayerState.FALLING
-			var direction =  position - prevPosition 
+			var direction =  position - prevPosition
 			vel = (direction/lastDelta) * boostOut
 	elif event.is_action_pressed("ui_select"):
 		respawn()
-		
+
 func respawn():
 	position.y = 0
 	vel = Vector2.ZERO
 	playerState = PlayerState.FLOATING
+
+func isColliding(polygon):
+	return Global.circleInPolygon(position, radius, polygon)
