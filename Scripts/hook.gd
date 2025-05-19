@@ -2,10 +2,11 @@ extends Node2D
 class_name Hook
 
 @onready var colorRect = $ColorRect
-@export var radius: float = 12
 @export var color: Color = Color()
 var player : Player
 var roof
+var radius
+var respawn_btn
 
 enum HookState{
 	IDLE,
@@ -14,17 +15,20 @@ enum HookState{
 }
 
 var hookState = HookState.IDLE
-var speed = 700
+var speed
 var vel = Vector2(0,0)
 var angle
 var length
 
 func _ready() -> void:
+	radius = Global.HEIGHT/24
+	speed = 700 * Global.HEIGHT/450
 	player = get_parent().find_child('Player')
 	roof = get_parent().find_child('Terrain').roof
 	colorRect.size = Vector2(radius, radius)
 	colorRect.position = Vector2(-radius/2,-radius/2)
 	colorRect.material.set_shader_parameter("color",color);
+	respawn_btn = get_parent().find_child("CanvasLayer").find_child("Respawn Button")
 
 func _process(delta: float) -> void:
 	
@@ -39,26 +43,41 @@ func _process(delta: float) -> void:
 		pass
 	
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("shootRight"):
-		if(hookState == HookState.HOOKED):
+	if not respawn_btn.isTouchingUI():
+		if(
+			event.is_action_pressed("shootRight")
+			or event is InputEventScreenTouch
+			and event.is_pressed() 
+			and event.position.x > Global.WIDTH/2):
+			if(hookState == HookState.HOOKED):
+				hookState = HookState.IDLE
+			else:
+				hookState = HookState.SHOOTING
+				vel.x = speed
+				vel.y = -speed
+				
+		elif (
+			event.is_action_pressed("shootLeft")
+			or event is InputEventScreenTouch
+			and event.is_pressed() 
+			and event.position.x < Global.WIDTH/2):
+			if(hookState == HookState.HOOKED):
+				hookState = HookState.IDLE
+			else:
+				hookState = HookState.SHOOTING
+				vel.x = -speed
+				vel.y = -speed
+				
+		elif (
+			event.is_action_released("shootRight")
+			or event is InputEventScreenTouch
+			and event.is_released()):
 			hookState = HookState.IDLE
-		else:
-			hookState = HookState.SHOOTING
-			vel.x = speed
-			vel.y = -speed
-			
-	elif event.is_action_pressed(("shootLeft")):
-		if(hookState == HookState.HOOKED):
+		elif (
+			event.is_action_released("shootLeft")
+			or event is InputEventScreenTouch
+			and event.is_released()):
 			hookState = HookState.IDLE
-		else:
-			hookState = HookState.SHOOTING
-			vel.x = -speed
-			vel.y = -speed
-			
-	elif event.is_action_released("shootRight"):
-		hookState = HookState.IDLE
-	elif event.is_action_released("shootLeft"):
-		hookState = HookState.IDLE
 
 func checkCollision():
 	if(Geometry2D.is_point_in_polygon(position, roof.polygon)):

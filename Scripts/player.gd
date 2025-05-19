@@ -4,8 +4,9 @@ class_name Player
 
 @onready var colorRect = $ColorRect
 @onready var hook : Hook = get_parent().find_child('Hook')
-@export var radius: float
 @export var color: Color = Color()
+var radius
+var respawn_btn
 
 enum PlayerState {
 	FLOATING,
@@ -26,14 +27,16 @@ var boostOut = 1.2
 var lastDelta
 
 var roof
-var floor
+var soil
 
 func _ready() -> void:
+	radius = Global.HEIGHT/18
 	colorRect.size = Vector2(radius*2, radius*2)
 	colorRect.position = Vector2(-radius,-radius)
 	colorRect.material.set_shader_parameter('color',color)
 	roof = get_parent().find_child('Terrain').roof
-	floor = get_parent().find_child('Terrain').floor
+	soil = get_parent().find_child('Terrain').soil
+	respawn_btn = get_parent().find_child("CanvasLayer").find_child("Respawn Button")
 
 func _process(delta):
 	if not Engine.is_editor_hint():
@@ -47,7 +50,7 @@ func _process(delta):
 			prevPosition = position
 			position += vel * delta
 
-			if isColliding(floor.polygon) or isColliding(roof.polygon):
+			if isColliding(soil.polygon) or isColliding(roof.polygon):
 				position -= vel * delta
 				vel.y *= -1
 
@@ -65,27 +68,37 @@ func _process(delta):
 				prevPosition = position
 				position.x = hook.length * sin(hook.angle) + hook.position.x
 				position.y = hook.length * cos(hook.angle) + hook.position.y
-				
-				if isColliding(roof.polygon) or isColliding(floor.polygon):
+
+				if isColliding(roof.polygon) or isColliding(soil.polygon):
 					angVel *= -1 #TODO not very well made
-					
+
 			else:
 				playerState = PlayerState.FALLING
 		counter += delta;
 		lastDelta = delta
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed('shootRight') or event.is_action_pressed('shootLeft'):
-		if(playerState == PlayerState.FLOATING):
-			playerState = PlayerState.FALLING
+	if not respawn_btn.isTouchingUI():
+		if (
+			event.is_action_pressed('shootRight')
+			or event.is_action_pressed('shootLeft')
+			or event is InputEventScreenTouch
+			and event.is_pressed()):
+			if(playerState == PlayerState.FLOATING):
+				playerState = PlayerState.FALLING
 
-	elif event.is_action_released('shootRight') or event.is_action_released('shootLeft'):
-		if playerState == PlayerState.SWINGING:
-			playerState = PlayerState.FALLING
-			var direction =  position - prevPosition
-			vel = (direction/lastDelta) * boostOut
-	elif event.is_action_pressed("ui_select"):
-		respawn()
+		elif (
+			event.is_action_released('shootRight')
+			or event.is_action_released('shootLeft')
+			or event is InputEventScreenTouch
+			and event.is_released()):
+			if playerState == PlayerState.SWINGING:
+				playerState = PlayerState.FALLING
+				var direction =  position - prevPosition
+				vel = (direction/lastDelta) * boostOut
+
+		elif event.is_action_pressed("ui_select"):
+			respawn()
 
 func respawn():
 	position.y = 0

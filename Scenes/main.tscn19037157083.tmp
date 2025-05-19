@@ -7,7 +7,7 @@
 [ext_resource type="Shader" uid="uid://qq30uq4kkud8" path="res://Assets/circle.gdshader" id="5_kry3j"]
 [ext_resource type="Script" uid="uid://cn7g8am374ni2" path="res://Scenes/respawn.gd" id="6_21xkr"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_21xkr"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6bp64"]
 shader = ExtResource("5_kry3j")
 shader_parameter/color = Vector3(0, 0, 0)
 
@@ -54,7 +54,7 @@ text = "* Hold ARROW KEY (left / right)
    resize your window and refresh"
 
 [node name="Respawn Button" type="ColorRect" parent="CanvasLayer"]
-material = SubResource("ShaderMaterial_21xkr")
+material = SubResource("ShaderMaterial_6bp64")
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0

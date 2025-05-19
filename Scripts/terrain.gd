@@ -1,7 +1,7 @@
 extends Node2D
 
 @onready var roof := $"Roof"
-@onready var floor := $"Floor"
+@onready var soil := $"Soil"
 @onready var player = $"../Player"
 
 var noise := FastNoiseLite.new()
@@ -13,7 +13,7 @@ var height
 var width
 var segmentWidth
 var roofPoints = PackedVector2Array()
-var floorPoints = PackedVector2Array()
+var soilPoints = PackedVector2Array()
 var roofCanvasVertices = []
 
 func _ready():
@@ -33,14 +33,14 @@ func _ready():
 
 	roof.polygon = roofPoints
 
-	floorPoints.append(Vector2(width/2, Global.HEIGHT/2))
-	floorPoints.append(Vector2(-width/2, Global.HEIGHT/2))
+	soilPoints.append(Vector2(width/2, Global.HEIGHT/2))
+	soilPoints.append(Vector2(-width/2, Global.HEIGHT/2))
 	for i in range(resolution):
 		var x = -width/2 + segmentWidth * i
 		var y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*0.35) * height*0.35 - height*0.35)
-		floorPoints.append(Vector2(x,y))
+		soilPoints.append(Vector2(x,y))
 
-	floor.polygon = floorPoints
+	soil.polygon = soilPoints
 
 func _process(_delta):
 
@@ -54,10 +54,10 @@ func _process(_delta):
 		roofPoints.append(Vector2(x,y))
 		roofPoints.remove_at(2)
 		y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*.35) * height*.35 - height*.35)
-		floorPoints[0].x += segmentWidth
-		floorPoints[1].x += segmentWidth
-		floorPoints.append(Vector2(x,y))
-		floorPoints.remove_at(2)
+		soilPoints[0].x += segmentWidth
+		soilPoints[1].x += segmentWidth
+		soilPoints.append(Vector2(x,y))
+		soilPoints.remove_at(2)
 		prevSegmentsCount += 1
 
 	while(newSegmentsCount < prevSegmentsCount):
@@ -68,11 +68,11 @@ func _process(_delta):
 		roofPoints.insert(2,Vector2(x,y))
 		roofPoints.remove_at(roofPoints.size()-1)
 		y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*.35) * height*.35 - height*.35)
-		floorPoints[0].x -= segmentWidth
-		floorPoints[1].x -= segmentWidth
-		floorPoints.insert(2,Vector2(x,y))
-		floorPoints.remove_at(floorPoints.size()-1)
+		soilPoints[0].x -= segmentWidth
+		soilPoints[1].x -= segmentWidth
+		soilPoints.insert(2,Vector2(x,y))
+		soilPoints.remove_at(soilPoints.size()-1)
 		prevSegmentsCount -= 1
 
 	roof.polygon = roofPoints
-	floor.polygon = floorPoints
+	soil.polygon = soilPoints
