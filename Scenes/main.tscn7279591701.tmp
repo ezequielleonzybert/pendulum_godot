@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dkb4jiegxtse8"]
+
+[ext_resource type="PackedScene" uid="uid://2n1u3vao0xuy" path="res://Scenes/player.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://cfcho6yyibm1d" path="res://Scenes/terrain.tscn" id="2_bo1nx"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Terrain" parent="." instance=ExtResource("2_bo1nx")]
+
+[node name="Player" parent="." instance=ExtResource("1_ig7tw")]
+gravity_scale = 0.0
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+drag_vertical_enabled = true
