@@ -1,0 +1,67 @@
+[gd_scene load_steps=8 format=3 uid="uid://dkb4jiegxtse8"]
+
+[ext_resource type="PackedScene" uid="uid://bq225vaoso8wk" path="res://Scenes/player.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://cfcho6yyibm1d" path="res://Scenes/terrain.tscn" id="2_bo1nx"]
+[ext_resource type="Script" uid="uid://b1dl42fd1hykh" path="res://Scenes/camera_2d.gd" id="3_8gbba"]
+[ext_resource type="PackedScene" uid="uid://b1ajwlwilgtor" path="res://Scenes/hook.tscn" id="4_jjvhh"]
+[ext_resource type="Shader" uid="uid://qq30uq4kkud8" path="res://Assets/circle.gdshader" id="5_kry3j"]
+[ext_resource type="Script" uid="uid://cn7g8am374ni2" path="res://Scenes/respawn.gd" id="6_21xkr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_21xkr"]
+shader = ExtResource("5_kry3j")
+shader_parameter/color = Vector3(0, 0, 0)
+
+[node name="Main" type="Node2D"]
+
+[node name="Terrain" parent="." instance=ExtResource("2_bo1nx")]
+
+[node name="Player" parent="." instance=ExtResource("1_ig7tw")]
+color = Color(0.893806, 0.46539, 0.475075, 1)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 15.0
+drag_horizontal_enabled = true
+script = ExtResource("3_8gbba")
+
+[node name="AlignV" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(0, -232, 0, 232)
+width = 1.0
+default_color = Color(0, 0, 1, 0.196078)
+metadata/_edit_lock_ = true
+
+[node name="AlignH" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(504, 0, -504, 0)
+width = 1.0
+default_color = Color(0, 0, 1, 0.196078)
+metadata/_edit_lock_ = true
+
+[node name="Hook" parent="." instance=ExtResource("4_jjvhh")]
+color = Color(0.894118, 0.466667, 0.47451, 1)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+visible = false
+offset_right = 256.0
+offset_bottom = 127.0
+text = "* Hold ARROW KEY (left / right)
+   to shoot the magnet link gun
+* Press SPACEBAR to re-spawn
+* If you are far from the roof,
+   resize your window and refresh"
+
+[node name="Respawn Button" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_21xkr")
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 50.0
+grow_horizontal = 0
+color = Color(0.334022, 0.624858, 0.456131, 1)
+script = ExtResource("6_21xkr")

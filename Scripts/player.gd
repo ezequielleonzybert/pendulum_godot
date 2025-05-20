@@ -46,26 +46,28 @@ func _process(delta):
 			position.y = sin(counter*7) * 10
 
 		elif(playerState == PlayerState.FALLING):
-			vel += acc * delta
-			prevPosition = position
-			position += vel * delta
 			
-			var collisionSoil = isColliding(soil.polygon)
-			var collisionRoof = isColliding(roof.polygon)
-			
-			if collisionSoil:
-				position = prevPosition
-				vel = vel.bounce(collisionSoil) * damping
-				
-			elif collisionRoof:
-				position = prevPosition
-				vel = vel.bounce(collisionRoof) * damping
-
 			if(hook.hookState == Hook.HookState.HOOKED):
 				playerState = PlayerState.SWINGING
 				var prevAngle = -(prevPosition.angle_to_point(position) - PI/2)
 				angVel = (vel.length() * sin(prevAngle - hook.angle) / hook.length) * boostIn
 				vel = Vector2.ZERO
+				
+			else:
+				vel += acc * delta
+				prevPosition = position
+				position += vel * delta
+				
+				var collisionSoil = isColliding(soil.polygon)
+				var collisionRoof = isColliding(roof.polygon)
+				
+				if collisionSoil:
+					position = prevPosition
+					vel = vel.bounce(collisionSoil) * damping
+					
+				elif collisionRoof:
+					position = prevPosition
+					vel = vel.bounce(collisionRoof) * damping
 
 		elif(playerState == PlayerState.SWINGING):
 			if(hook.hookState == Hook.HookState.HOOKED):

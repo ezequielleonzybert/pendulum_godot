@@ -21,33 +21,33 @@ var angle
 var length
 
 func _ready() -> void:
-	radius = Global.HEIGHT/24
+	radius = Global.HEIGHT/42
 	speed = 700 * Global.HEIGHT/450
 	player = get_parent().find_child('Player')
 	roof = get_parent().find_child('Terrain').roof
-	colorRect.size = Vector2(radius, radius)
-	colorRect.position = Vector2(-radius/2,-radius/2)
+	colorRect.size = Vector2(radius*2, radius*2)
+	colorRect.position = Vector2(-radius,-radius)
 	colorRect.material.set_shader_parameter("color",color);
 	respawn_btn = get_parent().find_child("CanvasLayer").find_child("Respawn Button")
 
 func _process(delta: float) -> void:
-	
+
 	if(hookState == HookState.IDLE):
 		position = player.position
-		
+
 	elif(hookState == HookState.SHOOTING):
 		position += vel * delta
 		checkCollision()
-		
+
 	elif(hookState == HookState.HOOKED):
 		pass
-	
+
 func _input(event: InputEvent) -> void:
 	if not respawn_btn.isTouchingUI():
 		if(
 			event.is_action_pressed("shootRight")
 			or event is InputEventScreenTouch
-			and event.is_pressed() 
+			and event.is_pressed()
 			and event.position.x > Global.WIDTH/2):
 			if(hookState == HookState.HOOKED):
 				hookState = HookState.IDLE
@@ -55,11 +55,11 @@ func _input(event: InputEvent) -> void:
 				hookState = HookState.SHOOTING
 				vel.x = speed
 				vel.y = -speed
-				
+
 		elif (
 			event.is_action_pressed("shootLeft")
 			or event is InputEventScreenTouch
-			and event.is_pressed() 
+			and event.is_pressed()
 			and event.position.x < Global.WIDTH/2):
 			if(hookState == HookState.HOOKED):
 				hookState = HookState.IDLE
@@ -67,7 +67,7 @@ func _input(event: InputEvent) -> void:
 				hookState = HookState.SHOOTING
 				vel.x = -speed
 				vel.y = -speed
-				
+
 		elif (
 			event.is_action_released("shootRight")
 			or event is InputEventScreenTouch
@@ -80,7 +80,7 @@ func _input(event: InputEvent) -> void:
 			hookState = HookState.IDLE
 
 func checkCollision():
-	if(Geometry2D.is_point_in_polygon(position, roof.polygon)):
+	if(Global.circleInPolygon(position, radius, roof.polygon)):
 			hookState = HookState.HOOKED
 			angle = -(player.position.angle_to_point(position) + PI/2)
 			length = position.distance_to(player.position)
