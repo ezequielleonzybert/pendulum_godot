@@ -21,6 +21,7 @@ var vel = Vector2(0,0)
 var angAcc
 var angVel
 var prevPosition = Vector2(0,0)
+var damping = .9
 
 var boostIn = 1
 var boostOut = 1.2
@@ -45,14 +46,20 @@ func _process(delta):
 			position.y = sin(counter*7) * 10
 
 		elif(playerState == PlayerState.FALLING):
-			acc.y = Global.GRAVITY
 			vel += acc * delta
 			prevPosition = position
 			position += vel * delta
-
-			if isColliding(soil.polygon) or isColliding(roof.polygon):
-				position -= vel * delta
-				vel.y *= -1
+			
+			var collisionSoil = isColliding(soil.polygon)
+			var collisionRoof = isColliding(roof.polygon)
+			
+			if collisionSoil:
+				position = prevPosition
+				vel = vel.bounce(collisionSoil) * damping
+				
+			elif collisionRoof:
+				position = prevPosition
+				vel = vel.bounce(collisionRoof) * damping
 
 			if(hook.hookState == Hook.HookState.HOOKED):
 				playerState = PlayerState.SWINGING
@@ -74,6 +81,7 @@ func _process(delta):
 
 			else:
 				playerState = PlayerState.FALLING
+				acc.y = Global.GRAVITY
 		counter += delta;
 		lastDelta = delta
 
@@ -86,6 +94,7 @@ func _input(event: InputEvent) -> void:
 			and event.is_pressed()):
 			if(playerState == PlayerState.FLOATING):
 				playerState = PlayerState.FALLING
+				acc.y = Global.GRAVITY
 
 		elif (
 			event.is_action_released('shootRight')
@@ -94,6 +103,7 @@ func _input(event: InputEvent) -> void:
 			and event.is_released()):
 			if playerState == PlayerState.SWINGING:
 				playerState = PlayerState.FALLING
+				acc.y = Global.GRAVITY
 				var direction =  position - prevPosition
 				vel = (direction/lastDelta) * boostOut
 
