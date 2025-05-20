@@ -82,6 +82,6 @@ func _input(event: InputEvent) -> void:
 func checkCollision():
 	if(Global.circleInPolygon(position, radius, roof.polygon)):
 			hookState = HookState.HOOKED
-			angle = -(player.position.angle_to_point(position) + PI/2)
-			length = position.distance_to(player.position)
+			#angle = -(player.position.angle_to_point(position) + PI/2)
+			#length = position.distance_to(player.position)
 			vel = Vector2.ZERO

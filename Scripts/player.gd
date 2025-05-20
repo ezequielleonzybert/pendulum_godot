@@ -48,6 +48,8 @@ func _process(delta):
 		elif(playerState == PlayerState.FALLING):
 			
 			if(hook.hookState == Hook.HookState.HOOKED):
+				hook.angle = -(position.angle_to_point(hook.position) + PI/2)
+				hook.length = hook.position.distance_to(position)
 				playerState = PlayerState.SWINGING
 				var prevAngle = -(prevPosition.angle_to_point(position) - PI/2)
 				angVel = (vel.length() * sin(prevAngle - hook.angle) / hook.length) * boostIn
