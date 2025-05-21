@@ -6,6 +6,7 @@ var radius = 20
 func _ready() -> void:
 	size.x = radius*2 * Global.HEIGHT/450
 	size.y = radius*2 * Global.HEIGHT/450
+	color = Global.color4
 	material.set_shader_parameter('color',color)
 	player = get_parent().get_parent().find_child("Player")
 

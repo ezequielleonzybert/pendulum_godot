@@ -16,9 +16,10 @@ shader_parameter/color = Vector3(0, 0, 0)
 [node name="Terrain" parent="." instance=ExtResource("2_bo1nx")]
 
 [node name="Player" parent="." instance=ExtResource("1_ig7tw")]
-color = Color(0.893806, 0.46539, 0.475075, 1)
+color = Color(0.811765, 0.819608, 0.101961, 1)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+visible = false
 position_smoothing_enabled = true
 position_smoothing_speed = 15.0
 drag_horizontal_enabled = true
@@ -39,29 +40,22 @@ default_color = Color(0, 0, 1, 0.196078)
 metadata/_edit_lock_ = true
 
 [node name="Hook" parent="." instance=ExtResource("4_jjvhh")]
-color = Color(0.465645, 0.671863, 0.504756, 1)
+color = Color(0.811765, 0.819608, 0.101961, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Label" type="Label" parent="CanvasLayer"]
-visible = false
-offset_right = 256.0
-offset_bottom = 127.0
-text = "* Hold ARROW KEY (left / right)
-   to shoot the magnet link gun
-* Press SPACEBAR to re-spawn
-* If you are far from the roof,
-   resize your window and refresh"
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -75.0
+offset_right = 237.0
+grow_vertical = 0
+scale = Vector2(0.7, 0.7)
+text = "* Hold ARROW KEY (left / right) o touch the screen for shooting the magnet link gun
+* Press SPACEBAR or touch the  button to re-spawn"
 
 [node name="Respawn Button" type="ColorRect" parent="CanvasLayer"]
 material = SubResource("ShaderMaterial_21xkr")
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -50.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = 50.0
-grow_horizontal = 0
 color = Color(0.334022, 0.624858, 0.456131, 1)
 script = ExtResource("6_21xkr")

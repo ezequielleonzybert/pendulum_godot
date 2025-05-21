@@ -27,6 +27,7 @@ func _ready() -> void:
 	roof = get_parent().find_child('Terrain').roof
 	colorRect.size = Vector2(radius*2, radius*2)
 	colorRect.position = Vector2(-radius,-radius)
+	color = Global.color3
 	colorRect.material.set_shader_parameter("color",color);
 	respawn_btn = get_parent().find_child("CanvasLayer").find_child("Respawn Button")
 

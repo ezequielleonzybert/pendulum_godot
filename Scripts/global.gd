@@ -3,13 +3,16 @@ extends Node2D
 var HEIGHT
 var WIDTH
 var GRAVITY
+var color1 = "337CA0"
+var color2 = "3EC300"
+var color3 = "FFFC31"
+var color4 = "FF1D15"
+var color5 = "E13700"
 
 func _ready() -> void:
 	WIDTH = get_viewport_rect().size.x
 	HEIGHT = get_viewport_rect().size.y
-	GRAVITY = 1500 * HEIGHT/450
-
-
+	GRAVITY = HEIGHT/450 * 1500
 
 func circleInPolygon(pos: Vector2, radius: float, polygon: PackedVector2Array) -> Vector2:
 	for i in range(polygon.size()):

@@ -34,6 +34,7 @@ func _ready() -> void:
 	radius = Global.HEIGHT/18
 	colorRect.size = Vector2(radius*2, radius*2)
 	colorRect.position = Vector2(-radius,-radius)
+	color = Global.color3
 	colorRect.material.set_shader_parameter('color',color)
 	roof = get_parent().find_child('Terrain').roof
 	soil = get_parent().find_child('Terrain').soil
@@ -46,30 +47,28 @@ func _process(delta):
 			position.y = sin(counter*7) * 10
 
 		elif(playerState == PlayerState.FALLING):
-			
+
 			if(hook.hookState == Hook.HookState.HOOKED):
+				vel += acc * delta
+				prevPosition = position
+				position += vel * delta
 				hook.angle = -(position.angle_to_point(hook.position) + PI/2)
 				hook.length = hook.position.distance_to(position)
 				playerState = PlayerState.SWINGING
 				var prevAngle = -(prevPosition.angle_to_point(position) - PI/2)
 				angVel = (vel.length() * sin(prevAngle - hook.angle) / hook.length) * boostIn
 				vel = Vector2.ZERO
-				
+
 			else:
+				var collisionData = getCollisionData([soil.polygon, roof.polygon])
+
+				if collisionData.isColliding:
+					position += collisionData.normal * (radius - collisionData.distance)
+					vel = vel.bounce(collisionData.normal) * damping
+
 				vel += acc * delta
 				prevPosition = position
 				position += vel * delta
-				
-				var collisionSoil = isColliding(soil.polygon)
-				var collisionRoof = isColliding(roof.polygon)
-				
-				if collisionSoil:
-					position = prevPosition
-					vel = vel.bounce(collisionSoil) * damping
-					
-				elif collisionRoof:
-					position = prevPosition
-					vel = vel.bounce(collisionRoof) * damping
 
 		elif(playerState == PlayerState.SWINGING):
 			if(hook.hookState == Hook.HookState.HOOKED):
@@ -80,7 +79,7 @@ func _process(delta):
 				position.x = hook.length * sin(hook.angle) + hook.position.x
 				position.y = hook.length * cos(hook.angle) + hook.position.y
 
-				if isColliding(roof.polygon) or isColliding(soil.polygon):
+				if getCollisionData([roof.polygon, soil.polygon]).isColliding:
 					angVel *= -1 #TODO not very well made
 
 			else:
@@ -119,5 +118,17 @@ func respawn():
 	vel = Vector2.ZERO
 	playerState = PlayerState.FLOATING
 
-func isColliding(polygon):
-	return Global.circleInPolygon(position, radius, polygon)
+func getCollisionData(polygons) ->Dictionary:
+	for polygon in polygons:
+		for i in range(polygon.size()):
+			var a = polygon[i]
+			var b = polygon[(i + 1) % polygon.size()]
+			var closestPoint = Geometry2D.get_closest_point_to_segment(position, a, b)
+			var distance = position.distance_to(closestPoint)
+			if distance < radius:
+				var dir = (b - a).normalized()
+				var normal = Vector2(-dir.y, dir.x)
+				if (position - closestPoint).dot(normal) < 0:
+					normal = -normal
+				return {"isColliding": true, "normal": normal, "direction": dir, "distance": distance}
+	return {"isColliding": false, "normal":Vector2.ZERO, "direction": Vector2.ZERO}

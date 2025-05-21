@@ -3,18 +3,20 @@ extends Node2D
 @onready var roof := $"Roof"
 @onready var soil := $"Soil"
 @onready var player = $"../Player"
+@onready var background = $BackgroundCanvas/Background
 
 var noise := FastNoiseLite.new()
 var prevSegmentsCount = 0
-var resolution = 200
+var resolution = 30
 var amplitude = 1.7
-var noiseScale = 1
+var noiseScale = 1.5
 var height
 var width
 var segmentWidth
 var roofPoints = PackedVector2Array()
 var soilPoints = PackedVector2Array()
 var roofCanvasVertices = []
+var factor
 
 func _ready():
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
@@ -23,6 +25,10 @@ func _ready():
 	width = Global.WIDTH * 2
 	height = Global.HEIGHT/8 * amplitude
 	segmentWidth = width / float(resolution)
+	background.size = Vector2(Global.WIDTH, Global.HEIGHT)
+	background.color = Global.color1
+	roof.color = Global.color2
+	soil.color = Global.color2
 
 	roofPoints.append(Vector2(width/2, -Global.HEIGHT/2))
 	roofPoints.append(Vector2(-width/2, -Global.HEIGHT/2))
@@ -37,7 +43,8 @@ func _ready():
 	soilPoints.append(Vector2(-width/2, Global.HEIGHT/2))
 	for i in range(resolution):
 		var x = -width/2 + segmentWidth * i
-		var y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*0.35) * height*0.35 - height*0.35)
+		factor = 0.35
+		var y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*factor+5000) * height*factor - height*factor)
 		soilPoints.append(Vector2(x,y))
 
 	soil.polygon = soilPoints
@@ -53,7 +60,7 @@ func _process(_delta):
 		roofPoints[1].x += segmentWidth
 		roofPoints.append(Vector2(x,y))
 		roofPoints.remove_at(2)
-		y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*.35) * height*.35 - height*.35)
+		y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*factor+5000) * height*factor - height*factor)
 		soilPoints[0].x += segmentWidth
 		soilPoints[1].x += segmentWidth
 		soilPoints.append(Vector2(x,y))
@@ -67,7 +74,7 @@ func _process(_delta):
 		roofPoints[1].x -= segmentWidth
 		roofPoints.insert(2,Vector2(x,y))
 		roofPoints.remove_at(roofPoints.size()-1)
-		y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*.35) * height*.35 - height*.35)
+		y = (Global.HEIGHT/2 - noise.get_noise_1d(x*noiseScale*factor+5000) * height*factor - height*factor)
 		soilPoints[0].x -= segmentWidth
 		soilPoints[1].x -= segmentWidth
 		soilPoints.insert(2,Vector2(x,y))
