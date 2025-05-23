@@ -71,16 +71,18 @@ func _process(delta):
 				position += vel * delta
 
 		elif(playerState == PlayerState.SWINGING):
+			
 			if(hook.hookState == Hook.HookState.HOOKED):
-				angAcc = -Global.GRAVITY * sin(hook.angle) / hook.length
-				angVel += angAcc * delta
+				if getCollisionData([roof.polygon, soil.polygon]).isColliding:
+					#position = prevPosition
+					angVel *= -1 #TODO not very well made
+				else:
+					angAcc = -Global.GRAVITY * sin(hook.angle) / hook.length
+					angVel += angAcc * delta
 				hook.angle += angVel * delta
 				prevPosition = position
 				position.x = hook.length * sin(hook.angle) + hook.position.x
 				position.y = hook.length * cos(hook.angle) + hook.position.y
-
-				if getCollisionData([roof.polygon, soil.polygon]).isColliding:
-					angVel *= -1 #TODO not very well made
 
 			else:
 				playerState = PlayerState.FALLING
