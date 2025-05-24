@@ -49,7 +49,7 @@ func _process(delta):
 
 		elif(playerState == PlayerState.FALLING):
 			if(Engine.get_frames_drawn()%30 == 0):
-				speedLabel.text = str(int(((prevPosition-position).length()*10)))
+				speedLabel.text = str(int(((prevPosition-position).length()*delta*2222)))
 
 			if(hook.hookState == Hook.HookState.HOOKED):
 				vel += acc * delta
@@ -75,7 +75,7 @@ func _process(delta):
 
 		elif(playerState == PlayerState.SWINGING):
 			if(Engine.get_frames_drawn()%30 == 0):
-				speedLabel.text = str(int(((prevPosition-position).length()*10)))
+				speedLabel.text = str(int(((prevPosition-position).length()*delta*2222)))
 			
 			if(hook.hookState == Hook.HookState.HOOKED):
 				if getCollisionData([roof.polygon, soil.polygon]).isColliding:
