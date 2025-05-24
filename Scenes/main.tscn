@@ -59,3 +59,11 @@ text = "* Hold ARROW KEY (left / right) o touch the screen for shooting the magn
 material = SubResource("ShaderMaterial_21xkr")
 color = Color(0.334022, 0.624858, 0.456131, 1)
 script = ExtResource("6_21xkr")
+
+[node name="speedLabel" type="Label" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 23.0
+grow_horizontal = 0

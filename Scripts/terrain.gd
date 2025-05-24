@@ -1,15 +1,19 @@
 extends Node2D
 
-@onready var roof := $"Roof"
-@onready var soil := $"Soil"
+@onready var roof := $"SubViewport/Roof"
+@onready var soil := $SubViewport/Soil
 @onready var player = $"../Player"
-@onready var background = $BackgroundCanvas/Background
+@onready var playerCamera = get_node("/root/Main/Player/Camera2D")
+@onready var background = $SubViewport/BackgroundCanvas/Background
+@onready var sv = $SubViewport
+@onready var svCamera = $SubViewport/Camera2D
+@onready var texRec = $TextureRect
 
 var noise := FastNoiseLite.new()
 var prevSegmentsCount = 0
-var resolution = 30
+var resolution = 200
 var amplitude = 1.7
-var noiseScale = 1.5
+var noiseScale = 10.0
 var height
 var width
 var segmentWidth
@@ -20,7 +24,7 @@ var factor
 
 func _ready():
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
-	noise.frequency = 0.002
+	noise.frequency = 0.0001
 	noise.seed = randi()
 	width = Global.WIDTH * 2
 	height = Global.HEIGHT/8 * amplitude
@@ -48,8 +52,18 @@ func _ready():
 		soilPoints.append(Vector2(x,y))
 
 	soil.polygon = soilPoints
+	
+	sv.size = Vector2(Global.WIDTH, Global.HEIGHT)
+	texRec.position.x = -Global.WIDTH/2
+	texRec.position.y = -Global.HEIGHT/2 
+	texRec.texture = sv.get_texture()
 
 func _process(_delta):
+	
+	texRec.position.x = -Global.WIDTH/2 + playerCamera.get_screen_center_position().x
+	texRec.position.y = -Global.HEIGHT/2 + playerCamera.get_screen_center_position().y
+	svCamera.position = playerCamera.get_screen_center_position()
+	texRec.texture = sv.get_texture()
 
 	var newSegmentsCount: int = floor(player.position.x / segmentWidth)
 

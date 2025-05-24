@@ -1,17 +1,32 @@
-[gd_scene load_steps=2 format=3 uid="uid://cfcho6yyibm1d"]
+[gd_scene load_steps=4 format=3 uid="uid://cfcho6yyibm1d"]
 
 [ext_resource type="Script" uid="uid://cj3pkbkhea8xk" path="res://Scripts/terrain.gd" id="1_g24sy"]
+[ext_resource type="Shader" uid="uid://b6wg4pd62542r" path="res://Assets/terrain.gdshader" id="2_62tj5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pmkc2"]
+shader = ExtResource("2_62tj5")
+shader_parameter/resolution = Vector2(1024, 600)
 
 [node name="Terrain" type="Node2D"]
 script = ExtResource("1_g24sy")
 
-[node name="BackgroundCanvas" type="CanvasLayer" parent="."]
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+
+[node name="BackgroundCanvas" type="CanvasLayer" parent="SubViewport"]
 layer = -128
 
-[node name="Background" type="ColorRect" parent="BackgroundCanvas"]
+[node name="Background" type="ColorRect" parent="SubViewport/BackgroundCanvas"]
 
-[node name="Roof" type="Polygon2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="SubViewport"]
+
+[node name="Roof" type="Polygon2D" parent="SubViewport"]
 color = Color(0.94902, 0.913725, 0.862745, 1)
 
-[node name="Soil" type="Polygon2D" parent="."]
+[node name="Soil" type="Polygon2D" parent="SubViewport"]
 color = Color(0.94902, 0.913725, 0.862745, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_pmkc2")
+offset_right = 40.0
+offset_bottom = 40.0

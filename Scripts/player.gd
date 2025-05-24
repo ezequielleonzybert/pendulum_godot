@@ -4,6 +4,7 @@ class_name Player
 
 @onready var colorRect = $ColorRect
 @onready var hook : Hook = get_parent().find_child('Hook')
+@onready var speedLabel = get_node("/root/Main/CanvasLayer/speedLabel")
 @export var color: Color = Color()
 var radius
 var respawn_btn
@@ -47,6 +48,8 @@ func _process(delta):
 			position.y = sin(counter*7) * 10
 
 		elif(playerState == PlayerState.FALLING):
+			if(Engine.get_frames_drawn()%30 == 0):
+				speedLabel.text = str(int(((prevPosition-position).length()*10)))
 
 			if(hook.hookState == Hook.HookState.HOOKED):
 				vel += acc * delta
@@ -71,6 +74,8 @@ func _process(delta):
 				position += vel * delta
 
 		elif(playerState == PlayerState.SWINGING):
+			if(Engine.get_frames_drawn()%30 == 0):
+				speedLabel.text = str(int(((prevPosition-position).length()*10)))
 			
 			if(hook.hookState == Hook.HookState.HOOKED):
 				if getCollisionData([roof.polygon, soil.polygon]).isColliding:
@@ -89,6 +94,7 @@ func _process(delta):
 				acc.y = Global.GRAVITY
 		counter += delta;
 		lastDelta = delta
+		
 
 func _input(event: InputEvent) -> void:
 	if not respawn_btn.isTouchingUI():
